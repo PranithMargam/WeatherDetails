@@ -23,12 +23,18 @@ extension HomeViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        print("called")
         if editingStyle == .delete {
-            self.removeAnnotation(forLocation: self.bookmarkedLocations[indexPath.row])
-            bookmarkedLocations.remove(at: indexPath.row)
-            SaveLocationDataUtility.saveBookmarkedlocations(self.bookmarkedLocations)
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            deleteAction(for: tableView,atIndexPath: indexPath)
+        }
+    }
+    
+    private func deleteAction(for tableView:UITableView, atIndexPath indexPath: IndexPath) {
+        self.removeAnnotation(forLocation: self.bookmarkedLocations[indexPath.row])
+        bookmarkedLocations.remove(at: indexPath.row)
+        SaveLocationDataUtility.saveBookmarkedlocations(self.bookmarkedLocations)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+        if bookmarkedLocations.count == 0 {
+            self.updateInfoLabelText()
         }
     }
 }

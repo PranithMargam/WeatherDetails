@@ -23,7 +23,13 @@ class HomeViewController: UIViewController {
         let mapView = MKMapView()
         return mapView
     }()
+    
+    let infoLabel: UILabel = {
+        let label = UILabel()
         
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpUI()
@@ -36,9 +42,11 @@ class HomeViewController: UIViewController {
     }
 
     private func setUpUI() {
+        self.view.backgroundColor = .systemBackground
         self.navigationItem.title = "Whether"
         addRightBarButtons()
         addMapView()
+        addInfoLabel()
         addTableView()
     }
 
@@ -56,9 +64,18 @@ class HomeViewController: UIViewController {
         mapView.delegate = self
     }
     
+    private func addInfoLabel() {
+        infoLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        infoLabel.textColor = UIColor.secondaryLabel
+        infoLabel.textAlignment = .left
+        infoLabel.numberOfLines = 0
+        self.view.addSubview(infoLabel)
+        infoLabel.anchor(top: self.mapView.bottomAnchor, leading: self.view.leadingAnchor, bottom: nil, trailing: self.view.trailingAnchor,padding: .init(top: 6, left: 12, bottom: 0, right: 12),size: .init(width: 0, height: 48))
+    }
+    
     private func addTableView() {
         self.view.addSubview(tableView)
-        tableView.anchor(top: mapView.bottomAnchor, leading: self.view.leadingAnchor, bottom: self.view.bottomAnchor, trailing: self.view.trailingAnchor,padding: .zero)
+        tableView.anchor(top: infoLabel.bottomAnchor, leading: self.view.leadingAnchor, bottom: self.view.bottomAnchor, trailing: self.view.trailingAnchor,padding: .zero)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(LocationCell.self, forCellReuseIdentifier: LocationCell.cellId)
@@ -70,7 +87,7 @@ class HomeViewController: UIViewController {
             self.bookmarkedLocations.append(location)
             SaveLocationDataUtility.saveBookmarkedlocations(self.bookmarkedLocations)
             self.addAnnotation(forLocation: location)
-            self.tableView.reloadData()
+            reloadData()
         }
     }
     
@@ -78,7 +95,20 @@ class HomeViewController: UIViewController {
         self.bookmarkedLocations.forEach({ self.removeAnnotation(forLocation: $0)})
         self.bookmarkedLocations = SaveLocationDataUtility.getBookmarkedLocations()
         self.bookmarkedLocations.forEach({ self.addAnnotation(forLocation: $0)})
+        reloadData()
+    }
+    
+    private func reloadData() {
+        updateInfoLabelText()
         self.tableView.reloadData()
+    }
+    
+    func updateInfoLabelText() {
+        if self.bookmarkedLocations.count == 0 {
+            self.infoLabel.text = "Please,Tap on City names on Map to add in bookmarks list"
+        } else {
+            self.infoLabel.text = "Note: To delete city from list,Please swipe left on City tile"
+        }
     }
 }
 //MARK:- Button Action Methods

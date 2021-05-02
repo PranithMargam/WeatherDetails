@@ -51,7 +51,6 @@ extension HomeViewController: MKMapViewDelegate,CLLocationManagerDelegate {
     
     //MARK:- CLLocationManagerDelegate Methods
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Not callerd")
         let mUserLocation:CLLocation = locations[0] as CLLocation
         
         let center = CLLocationCoordinate2D(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
@@ -84,8 +83,7 @@ extension HomeViewController: MKMapViewDelegate,CLLocationManagerDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard annotation is MKPointAnnotation else { return nil }
-        print("-->")
-
+        
           let identifier = "Annotation"
           var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
 
